@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  </head>
+  <body
+    @load="colorChange()"
+    id="app"
+    class="h-screen w-screen bg-gradient-to-br from-blue-200 to-pink-200"
+  >
+    <div
+      class="bg-gradient-to-r from-blue-500 to-pink-500 text-center h-16 flex"
+    >
+      <h1 class="text-white text-xl sticky m-auto">
+        👶 Baby Lancaster's Gender Reveal 👶
+      </h1>
+    </div>
+    <div class="h-[calc(100%-4rem)] p-10 flex items-center justify-center">
+      <div
+        class="rounded bg-blue-300 bg-gradient-to-br from-blue-500 to-pink-500 md:w-1/2 p-10 text-center"
+      >
+        <!-- SECTION 1 -->
+        <div v-if="currentSection === 0" class="m-auto p-6">
+          <p class="text-white text-xl">
+            Welcome to The Lancaster's Gender Reveal. Once revealed we ask that
+            you keep the gender private until everyone has gone through it
+            themselves.
+          </p>
+          <button
+            @click="nextSection"
+            class="mt-8 px-4 py-2 rounded-sm text-white bg-gradient-to-br from-green-500 to-teal-500"
+          >
+            Acknoledge
+          </button>
+        </div>
+
+        <!-- SECTION 1 -->
+        <div v-if="currentSection === 1" class="m-auto p-6">
+          <p class="text-white text-2xl">It's time to make your Guess.</p>
+          <button
+            @click="nextSection"
+            class="mt-8 px-4 py-2 rounded-sm text-white"
+            :class="{'bg-blue-500': switcher, 'bg-pink-400': !switcher}"
+          >
+            Proceed
+          </button>
+        </div>
+        <!-- SECTION 2 -->
+        <div v-if="currentSection === 2" class="m-auto p-6">
+          <h1 class="text-3xl mb-10 text-white">Select Your Guess</h1>
+          <div class="grid grid-cols-2 gap-4 w-full">
+            <button
+              class="col-span-2 md:col-span-1 p-10 md:p-6 py-16 rounded-sm text-white bg-pink-500 w-full text-3xl hover:rounded-full rounded-md"
+              @click="guess('g')"
+            >
+              Girl
+            </button>
+            <button
+              class="col-span-2 md:col-span-1 p-10 md:p-6 py-16 rounded-sm text-white bg-blue-500 w-full text-3xl hover:rounded-full rounded-md"
+              @click="guess('b')"
+            >
+              Boy
+            </button>
+          </div>
+        </div>
+        <!-- SECTION 3 -->
+        <div v-if="currentSection === 3" class="m-auto p-6">
+          <p v-if="currentCountdown !== 25" class="text-white text-4xl">
+            {{countdownArray[currentCountdown]}}
+          </p>
+          <div v-if="currentCountdown === 25">
+            <span class="text-5xl text-white">BOY!</span>
+            <div
+              v-if="guessedCorrectly === true && guessResult === true"
+              class="text-xl text-green-100 block mt-6 bg-gradient-to-br from-green-500 to-green-300 rounded p-3"
+            >
+              Great Guess! here's a Cookie 🍪
+            </div>
+            <div
+              v-if="guessedCorrectly === false && guessResult === true"
+              class="text-xl text-red-100 block mt-6 bg-gradient-to-br from-red-500 to-red-300 rounded p-3"
+            >
+              Close Guess, but no Pacifier
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>
+    const { createApp } = Vue
+
+    createApp({
+      data() {
+        return {
+          babyLancaster: "b",
+          switcher: false,
+          currentSection: 0,
+          guessedCorrectly: null,
+          guessResult: false,
+          currentCountdown: 0,
+          countdownIncrement: 2000,
+          countdownArray: [
+            "One for the Money!",
+            "Two for the Show!",
+            "Three to Get Ready!",
+            "Four to Gooo!",
+            "Initiating Countdown",
+            10,
+            9,
+            8,
+            7,
+            6,
+            5,
+            4,
+            "Shout out to the Fam!",
+            3,
+            "Shout out to the Homies! 🤜🤛",
+            2,
+            "Shout out to the Lord Jesus! 🙏",
+            1,
+            0,
+            -1,
+            -2,
+            "Ok Ok Ok...",
+            "But Seriously",
+            "It's",
+            "a",
+          ],
+        }
+      },
+      watch: {
+        guessedCorrectly(n, o) {
+          n === true || n === false ? (this.currentSection = 3) : null
+          this.countdownReveal()
+        },
+      },
+      methods: {
+        clearingInterval(inc) {
+          this.countdownIncrement = inc
+          clearInterval(this.countdownInterval)
+        },
+        activateInterval() {
+          this.countdownReveal()
+        },
+        guess(gender_selected) {
+          this.babyLancaster === gender_selected
+            ? (this.guessedCorrectly = true)
+            : (this.guessedCorrectly = false)
+        },
+        nextSection(section_number) {
+          this.currentSection += 1
+        },
+        colorChange() {
+          setInterval(() => {
+            this.switcher = !this.switcher
+            // console.log(this.switcher)
+            this.switcher === 2 ? (this.switcher = 0) : null
+          }, 1000)
+        },
+        countdownReveal() {
+          this.countdownInterval = setInterval(() => {
+            if (
+              this.currentCountdown === 4 ||
+              this.currentCountdown === 5 ||
+              this.currentCountdown === 6 ||
+              this.currentCountdown === 7 ||
+              this.currentCountdown === 8 ||
+              this.currentCountdown === 9 ||
+              this.currentCountdown === 10 ||
+              this.currentCountdown === 12 ||
+              this.currentCountdown === 14 ||
+              this.currentCountdown === 16 ||
+              this.currentCountdown === 17 ||
+              this.currentCountdown === 18 ||
+              this.currentCountdown === 19
+            ) {
+              this.clearingInterval(1000)
+              this.activateInterval()
+            } else {
+              this.clearingInterval(2000)
+              this.activateInterval()
+            }
+            if (this.currentCountdown === 24) {
+              clearInterval(this.countdownInterval)
+              setTimeout(() => {
+                this.guessResult = true
+              }, 3000)
+            }
+            this.currentCountdown++
+          }, this.countdownIncrement)
+        },
+      },
+      mounted() {
+        this.colorChange()
+      },
+    }).mount("#app")
+  </script>
+</html>
